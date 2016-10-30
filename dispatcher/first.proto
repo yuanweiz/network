@@ -1,0 +1,9 @@
+package tutorial;
+
+message StringMsg {
+  required string name = 1;
+}
+
+message Int32Msg {
+  required int32 val = 1;
+}
