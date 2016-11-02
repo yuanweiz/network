@@ -3,24 +3,24 @@
 #include <muduo/net/EventLoop.h>
 #include <muduo/net/TcpServer.h>
 #include <muduo/net/Callbacks.h>
-//#include <muduo/net/TcpConnection.h>
+#include <muduo/net/TcpConnection.h>
 #include "FileTransfer.pb.h"
 #include "Dispatcher.h"
 #include "Codec.h"
+#include "Context.h"
 using namespace std;
 using namespace muduo;
 
 class FileTransferServer{
     public:
+        //using FilePtr = std::unique_ptr<FILE,decltype(&::fclose)>;
         using FilePtr = std::shared_ptr<FILE>;
-        struct Context{
-            FilePtr fp;
-            bool running;
-        };
+        using TcpConnectionPtr = muduo::net::TcpConnectionPtr;
+        using Message = ::google::protobuf::Message;
+        //using ConnectionList = std::vector<Connection>;
         FileTransferServer (net::EventLoop* e, const net::InetAddress & addr)
-            :server_(e, addr,"ChatServer")
+            :server_(e, addr,"FileTransferServer")
         {
-            //use lambda to capture this
             server_.setConnectionCallback(
                     [this](const net::TcpConnectionPtr & conn) {
                         this->onConnection(conn);
@@ -37,37 +37,80 @@ class FileTransferServer{
                     this->sendTrunkOrShutdown(conn);
                     }
                     );
+
+            
+            dispatcher_.registerCallback<Init>(
+                    [=](const TcpConnectionPtr& conn,Init*msg)->void{
+                    this->onInitMessage(conn,msg);
+                    });
+
+            dispatcher_.registerCallback<Pause>(
+                    [=](const TcpConnectionPtr& conn,Pause*msg)->void{
+                    this->onPauseMessage(conn,msg);
+                    });
+
+            dispatcher_.registerCallback<Resume>(
+                    [=](const TcpConnectionPtr& conn,Resume*msg)->void{
+                    this->onResumeMessage(conn,msg);
+                    });
         }
 
-        //forward callbacks
-        //currently empty
         void onConnection(const net::TcpConnectionPtr & ) {
-            //send a request to trigger init
-            //encoder_.sendInitRequest(conn);
         }
-        
 
-        void onMessage (const net::TcpConnectionPtr & ,
+        void onMessage (const net::TcpConnectionPtr & conn,
                 net::Buffer*buf,
                 Timestamp )
         {
             auto msg=codec_.retrieveMessage(buf);
-            //dispatcher_.onMessage(msg.get());
+            dispatcher_.onMessage(conn,msg.get());
+        }
+
+        void onWriteComplete(const net::TcpConnectionPtr & conn){
+            const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
+            if (ctx.running){
+                sendTrunkOrShutdown(conn);
+            }
         }
 
         void sendTrunkOrShutdown(const net::TcpConnectionPtr & conn){
             char buf[65536];
-            const auto & pfile = boost::any_cast<const FilePtr&>(conn->getContext());
-            size_t n = ::fread(buf,1,sizeof(buf),pfile.get());
+            const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
+            FILE* fp = ctx.fp.get();
+            size_t n = ::fread(buf,1,ctx.trunkSize,fp);
+            //don't handle n<trunkSize, leave it to next iteration
             if (n==0){
                 conn->shutdown();
             }
             else {
                 Trunk trunk;
                 trunk.set_data(buf,n);
-                codec_.sendMessage(conn,&trunk);
-                //conn->send(buf,n);
+                codec_.sendMessage(conn,static_cast<Message*>(&trunk));
             }
+        }
+
+        void onInitMessage(const net::TcpConnectionPtr & conn, Init * init){
+            std::string fname=init->filename();
+            int trunkSize = init->trunksize();
+            int startIdx = init->startidx();
+            FILE * fp = ::fopen(fname.c_str(),"rb");
+            ::fseek(fp,startIdx*trunkSize,SEEK_CUR);
+            Context ctx(fp,trunkSize);
+            conn->setContext( boost::any{std::move(ctx)});
+            //send first trunk
+            sendTrunkOrShutdown(conn);//this will indirectly trigger onWriteComplete
+        }
+
+        void onPauseMessage(const net::TcpConnectionPtr & conn, Pause * ){
+            const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
+            ctx.running = false;
+        }
+
+        void onResumeMessage(const net::TcpConnectionPtr & conn, Resume * ){
+            const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
+            ctx.running = true;
+            //re-trigger 
+            sendTrunkOrShutdown(conn);
         }
 
         void start(){
@@ -83,6 +126,7 @@ class FileTransferServer{
         Codec codec_;
         Dispatcher dispatcher_;
 };
+
 int main (){
     net::EventLoop e;
     net::InetAddress addr(8765); 

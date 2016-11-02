@@ -8,6 +8,8 @@
 #include "FileTransfer.pb.h"
 #include "Dispatcher.h"
 #include "Codec.h"
+#include "Context.h"
+
 using namespace std;
 using namespace muduo;
 using namespace std::placeholders;
@@ -22,6 +24,7 @@ bool done=false;
 class FileTransferClient{
     public:
         using FilePtr = shared_ptr<FILE> ;
+        using TcpConnectionPtr = muduo::net::TcpConnectionPtr;
         FileTransferClient(net::EventLoop*loop,const net::InetAddress & addr)
             :client_(loop,addr,"FileTransferClient"),
             fp(fopen("file","ab"),::fclose)
@@ -37,7 +40,7 @@ class FileTransferClient{
                     std::bind(&FileTransferClient::onConnection,this,
                         _1));
             dispatcher_.registerCallback<Trunk>(
-                    std::bind(&FileTransferClient::handleTrunk,this,_1));
+                    std::bind(&FileTransferClient::handleTrunk,this,_1,_2));
 
         }
         void write (const char * buf,size_t size){
@@ -49,7 +52,7 @@ class FileTransferClient{
         }
         
     private:
-        void handleTrunk(Trunk*trunk){
+        void handleTrunk(const TcpConnectionPtr & ,Trunk*trunk){
             auto str = trunk->data();
             fwrite(str.data(),1,str.size(),fp.get());
         }
