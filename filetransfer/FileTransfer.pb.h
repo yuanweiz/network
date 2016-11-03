@@ -196,14 +196,14 @@ class Trunk : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required string data = 1;
+  // required bytes data = 1;
   inline bool has_data() const;
   inline void clear_data();
   static const int kDataFieldNumber = 1;
   inline const ::std::string& data() const;
   inline void set_data(const ::std::string& value);
   inline void set_data(const char* value);
-  inline void set_data(const char* value, size_t size);
+  inline void set_data(const void* value, size_t size);
   inline ::std::string* mutable_data();
   inline ::std::string* release_data();
   inline void set_allocated_data(::std::string* data);
@@ -567,7 +567,7 @@ inline void Init::set_allocated_filename(::std::string* filename) {
 
 // Trunk
 
-// required string data = 1;
+// required bytes data = 1;
 inline bool Trunk::has_data() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
@@ -603,7 +603,7 @@ inline void Trunk::set_data(const char* value) {
   data_->assign(value);
   // @@protoc_insertion_point(field_set_char:Trunk.data)
 }
-inline void Trunk::set_data(const char* value, size_t size) {
+inline void Trunk::set_data(const void* value, size_t size) {
   set_has_data();
   if (data_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     data_ = new ::std::string;

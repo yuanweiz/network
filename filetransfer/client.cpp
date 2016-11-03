@@ -3,8 +3,8 @@
 #include <muduo/net/EventLoopThread.h>
 #include <muduo/net/EventLoop.h>
 #include <muduo/net/TcpClient.h>
-//#include <muduo/base/Condition.h>
-
+#include <muduo/base/Condition.h>
+#include <muduo/base/Logging.h>
 #include "FileTransfer.pb.h"
 #include "Dispatcher.h"
 #include "Codec.h"
@@ -12,10 +12,6 @@
 
 using namespace std;
 using namespace muduo;
-using namespace std::placeholders;
-
-//#include <muduo/net/Callbacks.h>
-//#include <muduo/net/TcpConnection.h>
 
 muduo::MutexLock mutex_;
 muduo::Condition cond_(mutex_);
@@ -25,9 +21,11 @@ class FileTransferClient{
     public:
         using FilePtr = shared_ptr<FILE> ;
         using TcpConnectionPtr = muduo::net::TcpConnectionPtr;
+    private:
+    public:
         FileTransferClient(net::EventLoop*loop,const net::InetAddress & addr)
             :client_(loop,addr,"FileTransferClient"),
-            fp(fopen("file","ab"),::fclose)
+            fp(fopen("file.receive","wb"),::fclose)
         {
             client_.setMessageCallback(
                     [this](const net::TcpConnectionPtr & conn,
@@ -37,38 +35,42 @@ class FileTransferClient{
                     }
                     );
             client_.setConnectionCallback( 
-                    std::bind(&FileTransferClient::onConnection,this,
-                        _1));
+                    [=](const TcpConnectionPtr & conn)->void{
+                        this->onConnection(conn);
+                    }
+                    );
             dispatcher_.registerCallback<Trunk>(
-                    std::bind(&FileTransferClient::handleTrunk,this,_1,_2));
+                    [=](const TcpConnectionPtr& conn,Trunk*trunk)->void{
+                    this->handleTrunk(conn,trunk);
+                    }
+                    );
 
         }
-        void write (const char * buf,size_t size){
-            client_.connection()->send(buf,size);
-        }
-        
         void connect(){
             client_.connect();
         }
         
     private:
+
         void handleTrunk(const TcpConnectionPtr & ,Trunk*trunk){
+            static int totalWrite = 0;
             auto str = trunk->data();
             fwrite(str.data(),1,str.size(),fp.get());
+            totalWrite+=str.size();
+            LOG_INFO << "write " << str.size() <<" bytes, total="<<totalWrite;
         }
-        void onMessage(const net::TcpConnectionPtr & ,
+        void onMessage(const net::TcpConnectionPtr &conn ,
                 net::Buffer* buf,
                 Timestamp ){
-            auto msg =  codec_.retrieveMessage(buf);
-            //Don't worry about null pointer, dispatcher
-            //will handle it.
-            //dispatcher_.onMessage(msg.get());
+            while (true){
+                auto msg =  codec_.retrieveMessage(buf);
+                if (msg.get()==NULL)break;
+                dispatcher_.onMessage(conn,msg.get());
+            }
         }
         void onConnection(const net::TcpConnectionPtr & conn){
             if (conn->connected()){
                 //currently just shutdown
-                conn->shutdown();
-
                 Init initMsg;
                 initMsg.set_trunksize(512);
                 initMsg.set_filename("file");
@@ -77,6 +79,7 @@ class FileTransferClient{
                 conn->setContext(initMsg.filename());
             }
             else if (conn->disconnected()){
+                
                 MutexLockGuard guard(mutex_);
                 done = true;
                 cond_.notify();
@@ -103,14 +106,5 @@ int main (){
             cond_.wait();
         }
     }
-    e->quit();
-    e->runInLoop([](){fprintf(stderr,"Hello");});
-    //char buf[65536];
-    //while (true){
-    //    scanf("%s",buf);
-    //    auto len = ::strlen(buf);
-    //    if (len==0)break;
-    //    client.write(buf,len);
-    //}
     return 0;
 }

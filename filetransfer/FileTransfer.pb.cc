@@ -165,7 +165,7 @@ void protobuf_AddDesc_FileTransfer_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\022FileTransfer.proto\"=\n\004Init\022\021\n\ttrunkSiz"
     "e\030\001 \002(\005\022\020\n\010startIdx\030\002 \002(\005\022\020\n\010filename\030\003 "
-    "\002(\t\"\025\n\005Trunk\022\014\n\004data\030\001 \002(\t\"\010\n\006Resume\"\007\n\005"
+    "\002(\t\"\025\n\005Trunk\022\014\n\004data\030\001 \002(\014\"\010\n\006Resume\"\007\n\005"
     "Pause\"\006\n\004Stop", 133);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "FileTransfer.proto", &protobuf_RegisterTypes);
@@ -609,15 +609,11 @@ bool Trunk::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string data = 1;
+      // required bytes data = 1;
       case 1: {
         if (tag == 10) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
                 input, this->mutable_data()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->data().data(), this->data().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "data");
         } else {
           goto handle_unusual;
         }
@@ -650,13 +646,9 @@ failure:
 void Trunk::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:Trunk)
-  // required string data = 1;
+  // required bytes data = 1;
   if (has_data()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->data().data(), this->data().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "data");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
       1, this->data(), output);
   }
 
@@ -670,14 +662,10 @@ void Trunk::SerializeWithCachedSizes(
 ::google::protobuf::uint8* Trunk::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:Trunk)
-  // required string data = 1;
+  // required bytes data = 1;
   if (has_data()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->data().data(), this->data().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "data");
     target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
         1, this->data(), target);
   }
 
@@ -693,10 +681,10 @@ int Trunk::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string data = 1;
+    // required bytes data = 1;
     if (has_data()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
+        ::google::protobuf::internal::WireFormatLite::BytesSize(
           this->data());
     }
 

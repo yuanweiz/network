@@ -5,7 +5,7 @@ required string filename = 3;
 }
 
 message Trunk {
-required string data = 1;
+required bytes data = 1;
 }
 
 message Resume {

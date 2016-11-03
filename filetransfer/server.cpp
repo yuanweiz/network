@@ -4,6 +4,7 @@
 #include <muduo/net/TcpServer.h>
 #include <muduo/net/Callbacks.h>
 #include <muduo/net/TcpConnection.h>
+#include <muduo/base/Logging.h>
 #include "FileTransfer.pb.h"
 #include "Dispatcher.h"
 #include "Codec.h"
@@ -74,6 +75,7 @@ class FileTransferServer{
         }
 
         void sendTrunkOrShutdown(const net::TcpConnectionPtr & conn){
+            static int total = 0;
             char buf[65536];
             const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
             FILE* fp = ctx.fp.get();
@@ -86,6 +88,8 @@ class FileTransferServer{
                 Trunk trunk;
                 trunk.set_data(buf,n);
                 codec_.sendMessage(conn,static_cast<Message*>(&trunk));
+                total+=n;
+                LOG_INFO << "send "<<n<<" bytes, total="<<total;
             }
         }
 

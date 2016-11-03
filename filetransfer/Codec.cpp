@@ -11,7 +11,9 @@ void Codec::sendMessage(const Codec::TcpConnectionPtr& conn, Codec::Message*msg 
     std::string contents=msg->SerializeAsString();
     int32_t nameLen = typeName.size()+1; //including zero
     int32_t len = msg->ByteSize()+nameLen+2*sizeof(int32_t);
-    Buffer* buf = conn->outputBuffer();
+    Buffer buf_;
+    Buffer* buf = &buf_;
+    //Buffer* buf = conn->outputBuffer();
     buf->appendInt32(len);
     buf->appendInt32(nameLen);
     buf->append(typeName.c_str(),nameLen); //with zero
@@ -27,7 +29,7 @@ std::unique_ptr<Codec::Message> Codec::retrieveMessage(Codec::Buffer *buf){
         return Uptr{} ; //can't retrieve
     }
     int32_t len = buf->peekInt32();
-    if (len < static_cast<int32_t> (readableBytes)){
+    if (len > static_cast<int32_t> (readableBytes)){
         return Uptr{};
     }
     buf->readInt32(); //len, discard it
@@ -36,7 +38,7 @@ std::unique_ptr<Codec::Message> Codec::retrieveMessage(Codec::Buffer *buf){
     std::string nameStr( buf->peek(),nameLen);
     buf->retrieve(nameLen);
     auto * descriptorPool = ::google::protobuf::DescriptorPool::generated_pool();
-    auto * descriptor = descriptorPool->FindMessageTypeByName(""); //contain type metadata
+    auto * descriptor = descriptorPool->FindMessageTypeByName(nameStr); //contain type metadata
     Message * msg = ::google::protobuf::MessageFactory::generated_factory()
         ->GetPrototype(descriptor)
         ->New(); //on-heap object, remember to delete it

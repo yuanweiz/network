@@ -45,7 +45,7 @@ flags = [
 '-I',
 '/usr/include/c++/6.2.1',
 '-I',
-'../../muduo',
+'/data/code/muduo',
 '-x',
 'c++',
 ]
