@@ -1,0 +1,26 @@
+message Init {
+required int32 trunkSize = 1;
+required int32 startIdx = 2;
+required string filename = 3;
+}
+
+message Trunk {
+required bytes data = 1;
+}
+
+message Resume {
+}
+
+message Pause{
+}
+
+message Stop{
+}
+
+//message WeakChecksum{
+//required uint32 sum;
+//};
+//
+//message StrongChecksum{
+//required bytes sum; //128-bit?
+//};
