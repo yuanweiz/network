@@ -32,10 +32,13 @@ void protobuf_AssignDesc_FileTransfer_2eproto();
 void protobuf_ShutdownFile_FileTransfer_2eproto();
 
 class Init;
-class Trunk;
 class Resume;
 class Pause;
 class Stop;
+class RequestStrongChecksum;
+class Trunk;
+class WeakChecksum;
+class StrongChecksum;
 
 // ===================================================================
 
@@ -99,13 +102,6 @@ class Init : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 trunksize() const;
   inline void set_trunksize(::google::protobuf::int32 value);
 
-  // required int32 startIdx = 2;
-  inline bool has_startidx() const;
-  inline void clear_startidx();
-  static const int kStartIdxFieldNumber = 2;
-  inline ::google::protobuf::int32 startidx() const;
-  inline void set_startidx(::google::protobuf::int32 value);
-
   // required string filename = 3;
   inline bool has_filename() const;
   inline void clear_filename();
@@ -122,8 +118,6 @@ class Init : public ::google::protobuf::Message {
  private:
   inline void set_has_trunksize();
   inline void clear_has_trunksize();
-  inline void set_has_startidx();
-  inline void clear_has_startidx();
   inline void set_has_filename();
   inline void clear_has_filename();
 
@@ -131,99 +125,14 @@ class Init : public ::google::protobuf::Message {
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::google::protobuf::int32 trunksize_;
-  ::google::protobuf::int32 startidx_;
   ::std::string* filename_;
+  ::google::protobuf::int32 trunksize_;
   friend void  protobuf_AddDesc_FileTransfer_2eproto();
   friend void protobuf_AssignDesc_FileTransfer_2eproto();
   friend void protobuf_ShutdownFile_FileTransfer_2eproto();
 
   void InitAsDefaultInstance();
   static Init* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class Trunk : public ::google::protobuf::Message {
- public:
-  Trunk();
-  virtual ~Trunk();
-
-  Trunk(const Trunk& from);
-
-  inline Trunk& operator=(const Trunk& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const Trunk& default_instance();
-
-  void Swap(Trunk* other);
-
-  // implements Message ----------------------------------------------
-
-  Trunk* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const Trunk& from);
-  void MergeFrom(const Trunk& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // required bytes data = 1;
-  inline bool has_data() const;
-  inline void clear_data();
-  static const int kDataFieldNumber = 1;
-  inline const ::std::string& data() const;
-  inline void set_data(const ::std::string& value);
-  inline void set_data(const char* value);
-  inline void set_data(const void* value, size_t size);
-  inline ::std::string* mutable_data();
-  inline ::std::string* release_data();
-  inline void set_allocated_data(::std::string* data);
-
-  // @@protoc_insertion_point(class_scope:Trunk)
- private:
-  inline void set_has_data();
-  inline void clear_has_data();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
-  ::std::string* data_;
-  friend void  protobuf_AddDesc_FileTransfer_2eproto();
-  friend void protobuf_AssignDesc_FileTransfer_2eproto();
-  friend void protobuf_ShutdownFile_FileTransfer_2eproto();
-
-  void InitAsDefaultInstance();
-  static Trunk* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -432,6 +341,345 @@ class Stop : public ::google::protobuf::Message {
   void InitAsDefaultInstance();
   static Stop* default_instance_;
 };
+// -------------------------------------------------------------------
+
+class RequestStrongChecksum : public ::google::protobuf::Message {
+ public:
+  RequestStrongChecksum();
+  virtual ~RequestStrongChecksum();
+
+  RequestStrongChecksum(const RequestStrongChecksum& from);
+
+  inline RequestStrongChecksum& operator=(const RequestStrongChecksum& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const RequestStrongChecksum& default_instance();
+
+  void Swap(RequestStrongChecksum* other);
+
+  // implements Message ----------------------------------------------
+
+  RequestStrongChecksum* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const RequestStrongChecksum& from);
+  void MergeFrom(const RequestStrongChecksum& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required int32 trunkIdx = 1;
+  inline bool has_trunkidx() const;
+  inline void clear_trunkidx();
+  static const int kTrunkIdxFieldNumber = 1;
+  inline ::google::protobuf::int32 trunkidx() const;
+  inline void set_trunkidx(::google::protobuf::int32 value);
+
+  // @@protoc_insertion_point(class_scope:RequestStrongChecksum)
+ private:
+  inline void set_has_trunkidx();
+  inline void clear_has_trunkidx();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::int32 trunkidx_;
+  friend void  protobuf_AddDesc_FileTransfer_2eproto();
+  friend void protobuf_AssignDesc_FileTransfer_2eproto();
+  friend void protobuf_ShutdownFile_FileTransfer_2eproto();
+
+  void InitAsDefaultInstance();
+  static RequestStrongChecksum* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class Trunk : public ::google::protobuf::Message {
+ public:
+  Trunk();
+  virtual ~Trunk();
+
+  Trunk(const Trunk& from);
+
+  inline Trunk& operator=(const Trunk& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const Trunk& default_instance();
+
+  void Swap(Trunk* other);
+
+  // implements Message ----------------------------------------------
+
+  Trunk* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const Trunk& from);
+  void MergeFrom(const Trunk& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required bytes data = 1;
+  inline bool has_data() const;
+  inline void clear_data();
+  static const int kDataFieldNumber = 1;
+  inline const ::std::string& data() const;
+  inline void set_data(const ::std::string& value);
+  inline void set_data(const char* value);
+  inline void set_data(const void* value, size_t size);
+  inline ::std::string* mutable_data();
+  inline ::std::string* release_data();
+  inline void set_allocated_data(::std::string* data);
+
+  // @@protoc_insertion_point(class_scope:Trunk)
+ private:
+  inline void set_has_data();
+  inline void clear_has_data();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::std::string* data_;
+  friend void  protobuf_AddDesc_FileTransfer_2eproto();
+  friend void protobuf_AssignDesc_FileTransfer_2eproto();
+  friend void protobuf_ShutdownFile_FileTransfer_2eproto();
+
+  void InitAsDefaultInstance();
+  static Trunk* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class WeakChecksum : public ::google::protobuf::Message {
+ public:
+  WeakChecksum();
+  virtual ~WeakChecksum();
+
+  WeakChecksum(const WeakChecksum& from);
+
+  inline WeakChecksum& operator=(const WeakChecksum& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const WeakChecksum& default_instance();
+
+  void Swap(WeakChecksum* other);
+
+  // implements Message ----------------------------------------------
+
+  WeakChecksum* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const WeakChecksum& from);
+  void MergeFrom(const WeakChecksum& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // repeated uint32 sum = 1;
+  inline int sum_size() const;
+  inline void clear_sum();
+  static const int kSumFieldNumber = 1;
+  inline ::google::protobuf::uint32 sum(int index) const;
+  inline void set_sum(int index, ::google::protobuf::uint32 value);
+  inline void add_sum(::google::protobuf::uint32 value);
+  inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+      sum() const;
+  inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+      mutable_sum();
+
+  // required uint32 lastTrunkSize = 2;
+  inline bool has_lasttrunksize() const;
+  inline void clear_lasttrunksize();
+  static const int kLastTrunkSizeFieldNumber = 2;
+  inline ::google::protobuf::uint32 lasttrunksize() const;
+  inline void set_lasttrunksize(::google::protobuf::uint32 value);
+
+  // @@protoc_insertion_point(class_scope:WeakChecksum)
+ private:
+  inline void set_has_lasttrunksize();
+  inline void clear_has_lasttrunksize();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::google::protobuf::RepeatedField< ::google::protobuf::uint32 > sum_;
+  ::google::protobuf::uint32 lasttrunksize_;
+  friend void  protobuf_AddDesc_FileTransfer_2eproto();
+  friend void protobuf_AssignDesc_FileTransfer_2eproto();
+  friend void protobuf_ShutdownFile_FileTransfer_2eproto();
+
+  void InitAsDefaultInstance();
+  static WeakChecksum* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class StrongChecksum : public ::google::protobuf::Message {
+ public:
+  StrongChecksum();
+  virtual ~StrongChecksum();
+
+  StrongChecksum(const StrongChecksum& from);
+
+  inline StrongChecksum& operator=(const StrongChecksum& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const StrongChecksum& default_instance();
+
+  void Swap(StrongChecksum* other);
+
+  // implements Message ----------------------------------------------
+
+  StrongChecksum* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const StrongChecksum& from);
+  void MergeFrom(const StrongChecksum& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required bytes sum = 1;
+  inline bool has_sum() const;
+  inline void clear_sum();
+  static const int kSumFieldNumber = 1;
+  inline const ::std::string& sum() const;
+  inline void set_sum(const ::std::string& value);
+  inline void set_sum(const char* value);
+  inline void set_sum(const void* value, size_t size);
+  inline ::std::string* mutable_sum();
+  inline ::std::string* release_sum();
+  inline void set_allocated_sum(::std::string* sum);
+
+  // @@protoc_insertion_point(class_scope:StrongChecksum)
+ private:
+  inline void set_has_sum();
+  inline void clear_has_sum();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::google::protobuf::uint32 _has_bits_[1];
+  mutable int _cached_size_;
+  ::std::string* sum_;
+  friend void  protobuf_AddDesc_FileTransfer_2eproto();
+  friend void protobuf_AssignDesc_FileTransfer_2eproto();
+  friend void protobuf_ShutdownFile_FileTransfer_2eproto();
+
+  void InitAsDefaultInstance();
+  static StrongChecksum* default_instance_;
+};
 // ===================================================================
 
 
@@ -463,39 +711,15 @@ inline void Init::set_trunksize(::google::protobuf::int32 value) {
   // @@protoc_insertion_point(field_set:Init.trunkSize)
 }
 
-// required int32 startIdx = 2;
-inline bool Init::has_startidx() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void Init::set_has_startidx() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void Init::clear_has_startidx() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void Init::clear_startidx() {
-  startidx_ = 0;
-  clear_has_startidx();
-}
-inline ::google::protobuf::int32 Init::startidx() const {
-  // @@protoc_insertion_point(field_get:Init.startIdx)
-  return startidx_;
-}
-inline void Init::set_startidx(::google::protobuf::int32 value) {
-  set_has_startidx();
-  startidx_ = value;
-  // @@protoc_insertion_point(field_set:Init.startIdx)
-}
-
 // required string filename = 3;
 inline bool Init::has_filename() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000002u) != 0;
 }
 inline void Init::set_has_filename() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000002u;
 }
 inline void Init::clear_has_filename() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000002u;
 }
 inline void Init::clear_filename() {
   if (filename_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -561,6 +785,46 @@ inline void Init::set_allocated_filename(::std::string* filename) {
     filename_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
   // @@protoc_insertion_point(field_set_allocated:Init.filename)
+}
+
+// -------------------------------------------------------------------
+
+// Resume
+
+// -------------------------------------------------------------------
+
+// Pause
+
+// -------------------------------------------------------------------
+
+// Stop
+
+// -------------------------------------------------------------------
+
+// RequestStrongChecksum
+
+// required int32 trunkIdx = 1;
+inline bool RequestStrongChecksum::has_trunkidx() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void RequestStrongChecksum::set_has_trunkidx() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void RequestStrongChecksum::clear_has_trunkidx() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void RequestStrongChecksum::clear_trunkidx() {
+  trunkidx_ = 0;
+  clear_has_trunkidx();
+}
+inline ::google::protobuf::int32 RequestStrongChecksum::trunkidx() const {
+  // @@protoc_insertion_point(field_get:RequestStrongChecksum.trunkIdx)
+  return trunkidx_;
+}
+inline void RequestStrongChecksum::set_trunkidx(::google::protobuf::int32 value) {
+  set_has_trunkidx();
+  trunkidx_ = value;
+  // @@protoc_insertion_point(field_set:RequestStrongChecksum.trunkIdx)
 }
 
 // -------------------------------------------------------------------
@@ -645,15 +909,141 @@ inline void Trunk::set_allocated_data(::std::string* data) {
 
 // -------------------------------------------------------------------
 
-// Resume
+// WeakChecksum
+
+// repeated uint32 sum = 1;
+inline int WeakChecksum::sum_size() const {
+  return sum_.size();
+}
+inline void WeakChecksum::clear_sum() {
+  sum_.Clear();
+}
+inline ::google::protobuf::uint32 WeakChecksum::sum(int index) const {
+  // @@protoc_insertion_point(field_get:WeakChecksum.sum)
+  return sum_.Get(index);
+}
+inline void WeakChecksum::set_sum(int index, ::google::protobuf::uint32 value) {
+  sum_.Set(index, value);
+  // @@protoc_insertion_point(field_set:WeakChecksum.sum)
+}
+inline void WeakChecksum::add_sum(::google::protobuf::uint32 value) {
+  sum_.Add(value);
+  // @@protoc_insertion_point(field_add:WeakChecksum.sum)
+}
+inline const ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >&
+WeakChecksum::sum() const {
+  // @@protoc_insertion_point(field_list:WeakChecksum.sum)
+  return sum_;
+}
+inline ::google::protobuf::RepeatedField< ::google::protobuf::uint32 >*
+WeakChecksum::mutable_sum() {
+  // @@protoc_insertion_point(field_mutable_list:WeakChecksum.sum)
+  return &sum_;
+}
+
+// required uint32 lastTrunkSize = 2;
+inline bool WeakChecksum::has_lasttrunksize() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void WeakChecksum::set_has_lasttrunksize() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void WeakChecksum::clear_has_lasttrunksize() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void WeakChecksum::clear_lasttrunksize() {
+  lasttrunksize_ = 0u;
+  clear_has_lasttrunksize();
+}
+inline ::google::protobuf::uint32 WeakChecksum::lasttrunksize() const {
+  // @@protoc_insertion_point(field_get:WeakChecksum.lastTrunkSize)
+  return lasttrunksize_;
+}
+inline void WeakChecksum::set_lasttrunksize(::google::protobuf::uint32 value) {
+  set_has_lasttrunksize();
+  lasttrunksize_ = value;
+  // @@protoc_insertion_point(field_set:WeakChecksum.lastTrunkSize)
+}
 
 // -------------------------------------------------------------------
 
-// Pause
+// StrongChecksum
 
-// -------------------------------------------------------------------
-
-// Stop
+// required bytes sum = 1;
+inline bool StrongChecksum::has_sum() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void StrongChecksum::set_has_sum() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void StrongChecksum::clear_has_sum() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void StrongChecksum::clear_sum() {
+  if (sum_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    sum_->clear();
+  }
+  clear_has_sum();
+}
+inline const ::std::string& StrongChecksum::sum() const {
+  // @@protoc_insertion_point(field_get:StrongChecksum.sum)
+  return *sum_;
+}
+inline void StrongChecksum::set_sum(const ::std::string& value) {
+  set_has_sum();
+  if (sum_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    sum_ = new ::std::string;
+  }
+  sum_->assign(value);
+  // @@protoc_insertion_point(field_set:StrongChecksum.sum)
+}
+inline void StrongChecksum::set_sum(const char* value) {
+  set_has_sum();
+  if (sum_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    sum_ = new ::std::string;
+  }
+  sum_->assign(value);
+  // @@protoc_insertion_point(field_set_char:StrongChecksum.sum)
+}
+inline void StrongChecksum::set_sum(const void* value, size_t size) {
+  set_has_sum();
+  if (sum_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    sum_ = new ::std::string;
+  }
+  sum_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:StrongChecksum.sum)
+}
+inline ::std::string* StrongChecksum::mutable_sum() {
+  set_has_sum();
+  if (sum_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    sum_ = new ::std::string;
+  }
+  // @@protoc_insertion_point(field_mutable:StrongChecksum.sum)
+  return sum_;
+}
+inline ::std::string* StrongChecksum::release_sum() {
+  clear_has_sum();
+  if (sum_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    return NULL;
+  } else {
+    ::std::string* temp = sum_;
+    sum_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    return temp;
+  }
+}
+inline void StrongChecksum::set_allocated_sum(::std::string* sum) {
+  if (sum_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete sum_;
+  }
+  if (sum) {
+    set_has_sum();
+    sum_ = sum;
+  } else {
+    clear_has_sum();
+    sum_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  }
+  // @@protoc_insertion_point(field_set_allocated:StrongChecksum.sum)
+}
 
 
 // @@protoc_insertion_point(namespace_scope)

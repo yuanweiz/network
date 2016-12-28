@@ -7,7 +7,7 @@ using int32 = int32_t;
 using schar = char;
 const int  CHAR_OFFSET=0;
 
-uint32 checksum_weak(char *buf1, int32 len)
+uint32 checksum_weak(void *buf1, int32 len)
 {
     int32 i;
     uint32 s1, s2;
@@ -25,8 +25,9 @@ uint32 checksum_weak(char *buf1, int32 len)
     return (s1 & 0xffff) + (s2 << 16);
 }
 
-void checksum_strong(unsigned char *buf, uint32_t len, unsigned char *sum){
-    ::MD5(buf,len,sum);
+uint32_t checksum_strong( void *buf, uint32_t len,  void *sum){
+    ::MD5((const unsigned char*)buf,len,( unsigned char*)sum);
+    return 128;//hacky way
 }
 
 }

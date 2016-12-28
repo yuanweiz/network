@@ -1,11 +1,8 @@
+//Client Side
+
 message Init {
 required int32 trunkSize = 1;
-required int32 startIdx = 2;
 required string filename = 3;
-}
-
-message Trunk {
-required bytes data = 1;
 }
 
 message Resume {
@@ -17,10 +14,26 @@ message Pause{
 message Stop{
 }
 
-//message WeakChecksum{
-//required uint32 sum;
-//};
-//
-//message StrongChecksum{
-//required bytes sum; //128-bit?
-//};
+message RequestStrongChecksum{
+repeated int32 trunkIdx=1;
+}
+
+message RequestTrunks{
+repeated int32 trunkIdx=1;
+}
+
+//Sended by Server Side
+
+message Trunk {
+required uint32 idx=1;
+required bytes data = 2;
+}
+
+message WeakChecksum{
+repeated uint32 sum=1;
+required uint32 lastTrunkSize = 2; // 0 means without remainder
+};
+
+message StrongChecksum{
+repeated bytes sum=1; //128-bit?
+};

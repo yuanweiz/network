@@ -6,8 +6,8 @@
 
 namespace rsync {
 
-uint32_t  checksum_weak(char *buf1, uint32_t len);
-void checksum_strong(unsigned char *buf, uint32_t len, unsigned char *sum);
+uint32_t  checksum_weak(void *buf1, uint32_t len);
+uint32_t checksum_strong(void  *buf, uint32_t len,void *sum);
 
 }
 #endif // __RSYNC_H

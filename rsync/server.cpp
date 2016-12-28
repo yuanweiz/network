@@ -9,6 +9,8 @@
 #include "Dispatcher.h"
 #include "Codec.h"
 #include "Context.h"
+
+#include "rsync.h"
 using namespace std;
 using namespace muduo;
 
@@ -96,13 +98,33 @@ class FileTransferServer{
         void onInitMessage(const net::TcpConnectionPtr & conn, Init * init){
             std::string fname=init->filename();
             int trunkSize = init->trunksize();
-            int startIdx = init->startidx();
             FILE * fp = ::fopen(fname.c_str(),"rb");
-            ::fseek(fp,startIdx*trunkSize,SEEK_CUR);
+            //::fseek(fp,startIdx*trunkSize,SEEK_CUR);
             Context ctx(fp,trunkSize);
             conn->setContext( boost::any{std::move(ctx)});
-            //send first trunk
-            sendTrunkOrShutdown(conn);//this will indirectly trigger onWriteComplete
+            sendWeakChecksums (conn);
+        }
+
+        void sendWeakChecksums (const net::TcpConnectionPtr & conn){
+            const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
+            char buf[65536];
+            FILE * fp=ctx.fp.get();
+            ::fseek(fp,0L,SEEK_END);
+            auto fsize = ::ftell(fp);
+            auto lastTrunkSz = fsize % ctx.trunkSize;
+            WeakChecksum checksum;
+            checksum.set_lasttrunksize(lastTrunkSz);
+            for (int i=0;i< fsize/ctx.trunkSize;++i){
+                ::fread(buf,ctx.trunkSize,1,fp);
+                auto sum = rsync::checksum_weak(buf,ctx.trunkSize);
+                checksum.add_sum(sum);
+            }
+            if (lastTrunkSz!=0){
+                ::fread(buf,lastTrunkSz,1,fp);
+                auto sum = rsync::checksum_weak(buf,ctx.trunkSize);
+                checksum.add_sum(sum);
+            }
+            codec_.sendMessage(conn,&checksum);
         }
 
         void onPauseMessage(const net::TcpConnectionPtr & conn, Pause * ){
@@ -115,6 +137,22 @@ class FileTransferServer{
             ctx.running = true;
             //re-trigger 
             sendTrunkOrShutdown(conn);
+        }
+
+        void onRequestStrongCheckSum(const net::TcpConnectionPtr & conn, RequestStrongChecksum * r){
+            char buf[65536]; //TODO: might overflow
+            char sum[128];//checksum should be 128 bit
+            const Context & ctx = boost::any_cast<const Context &>(conn->getContext());
+            auto fp = ctx.fp;
+            auto trunkSize = ctx.trunkSize;
+            assert (trunkSize< sizeof buf);
+            auto trunkidx = r->trunkidx();
+            ::fseek(fp.get(), trunkSize*trunkidx, SEEK_SET);
+            ::fread(buf,trunkSize,1,fp.get());
+            auto sumsize = rsync::checksum_strong(buf,trunkSize,sum);
+            StrongChecksum checksum;
+            checksum.set_sum(::std::string{sum,sumsize});
+            codec_.sendMessage(conn,&checksum);
         }
 
         void start(){

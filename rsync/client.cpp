@@ -8,7 +8,6 @@
 #include "FileTransfer.pb.h"
 #include "Dispatcher.h"
 #include "Codec.h"
-#include "Context.h"
 
 using namespace std;
 using namespace muduo;
@@ -16,13 +15,27 @@ using namespace muduo;
 muduo::MutexLock mutex_;
 muduo::Condition cond_(mutex_);
 bool done=false;
-
+//std::vector<std::vector<
 class FileTransferClient{
     public:
         using FilePtr = shared_ptr<FILE> ;
         using TcpConnectionPtr = muduo::net::TcpConnectionPtr;
-    private:
-    public:
+
+        //struct HashTable{
+        //    HashTable(){
+        //        table_.reserve(2<<16);
+        //    }
+        //    std::vector<std::vector<std::pair<unsigned int,int>>> table_;
+        //    int * find(uint32_t sum){
+        //        if (table_[sum>>16].empty())return NULL;
+        //        else {
+        //            auto it=table_[sum>>16].find(sum);
+        //        }
+        //    }
+        //};
+        struct Context{
+            mutable std::map<unsigned int,vector<int>> hash;
+        };
         FileTransferClient(net::EventLoop*loop,const net::InetAddress & addr)
             :client_(loop,addr,"FileTransferClient"),
             fp(fopen("file.receive","wb"),::fclose)
@@ -59,6 +72,25 @@ class FileTransferClient{
             totalWrite+=str.size();
             LOG_INFO << "write " << str.size() <<" bytes, total="<<totalWrite;
         }
+        void handleWeakChecksum(const TcpConnectionPtr & conn, WeakChecksum * weak){
+            auto sz = weak->sum_size();
+            const Context & ctx=boost::any_cast<const Context&>(conn->getContext());
+            
+            //build table
+            for (int i=0;i<sz;++i){
+                auto it = ctx.hash.find(weak->sum(i));
+                if (it==ctx.hash.end()){
+                    ctx.hash[weak->sum(i)]={i};
+                }
+                else{
+                    //rarely happens
+                    ctx.hash[weak->sum(i)].push_back(i);
+                }
+            }
+            
+            //search through the file
+            
+        }
         void onMessage(const net::TcpConnectionPtr &conn ,
                 net::Buffer* buf,
                 Timestamp ){
@@ -72,14 +104,14 @@ class FileTransferClient{
             if (conn->connected()){
                 //currently just shutdown
                 Init initMsg;
-                initMsg.set_trunksize(512);
+                initMsg.set_trunksize(1024);
                 initMsg.set_filename("file");
-                initMsg.set_startidx(0);
                 codec_.sendMessage(conn,&initMsg);
-                conn->setContext(initMsg.filename());
+                Context ctx;
+                //conn->setContext(initMsg.filename());
+                conn->setContext(std::move(ctx));
             }
             else if (conn->disconnected()){
-                
                 MutexLockGuard guard(mutex_);
                 done = true;
                 cond_.notify();
@@ -87,7 +119,6 @@ class FileTransferClient{
         }
         net::TcpClient client_;
         Codec codec_;
-        //net::TcpConnectionPtr conn;
         Dispatcher dispatcher_;
         FilePtr fp;
 };
